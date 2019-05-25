@@ -74,7 +74,6 @@ public class AccountServiceTest {
         account.setId(1);
 
         Movement movement = new Movement();
-        movement.setId(1);
         movement.setAmount(amount);
         movement.setCurrency(bolivianos);
         movement.setType(MovementType.CREDIT);
@@ -82,14 +81,12 @@ public class AccountServiceTest {
         when(accountRepository.save(eq(account))).thenReturn(account);
         when(movementRepository.save(eq(movement))).thenReturn(movement);
 
-
         ResponseEntity responseEntity = accountService.create(account);
-
 
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         Map result = (HashMap) responseEntity.getBody();
         assertEquals(account.getId(), result.get("id"));
-        assertEquals(account.getId(), result.get("movementId"));
+        assertEquals(movement.getId(), result.get("movementId"));
 
         verify(accountRepository, times(1)).save(eq(account));
         verify(movementRepository, times(1)).save(eq(movement));

@@ -1,13 +1,32 @@
 package bo.com.mondongo.bankapp.entity;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "account")
 public class Account {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false)
     private int id;
+
+    @Column(name = "number", length = 13, unique = true)
     private String number;
-    private Department department;
-    private double balance;
+
+    @Column(name = "balance", nullable = false, precision = 10, scale = 2)
+    private Double balance;
+
+    @Column(name = "currency", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Currency currency;
+
+    @Column(name = "holder", length = 30, nullable = false)
     private String holder;
+
+    @Column(name = "department", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Department department;
 
     public int getId() {
         return id;

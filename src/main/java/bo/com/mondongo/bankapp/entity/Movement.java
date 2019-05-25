@@ -6,6 +6,15 @@ public class Movement {
     private MovementType type;
     private double amount;
 
+    @Override
+    public boolean equals(Object obj) {
+        Movement movement = (Movement) obj;
+        return this.amount == movement.amount &&
+            this.currency == movement.currency &&
+            this.type == movement.type &&
+            this.id == movement.id;
+    }
+
     public Movement() {
     }
 
