@@ -2,7 +2,11 @@ package bo.com.mondongo.bankapp.service;
 
 import bo.com.mondongo.bankapp.dto.AccountSampleDto;
 import bo.com.mondongo.bankapp.entity.Account;
+import bo.com.mondongo.bankapp.entity.Movement;
+import bo.com.mondongo.bankapp.entity.MovementType;
 import bo.com.mondongo.bankapp.repository.AccountRepository;
+import bo.com.mondongo.bankapp.repository.MovementRepository;
+import javafx.scene.canvas.GraphicsContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -13,15 +17,24 @@ import java.util.Map;
 
 public class AccountService {
     private AccountRepository accountRepository;
+    private MovementRepository movementRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, MovementRepository movementRepository) {
         this.accountRepository = accountRepository;
+        this.movementRepository = movementRepository;
     }
 
     public ResponseEntity create(Account account) {
-        Account resultAccount = accountRepository.save(account);
         Map<String, Object> result = new HashMap<>();
+        Account resultAccount = accountRepository.save(account);
         result.put("id", resultAccount.getId());
+
+        if (account.getBalance() > 0) {
+            Movement movement = Movement.createCredit(account);
+            movement = movementRepository.save(movement);
+            result.put("movementId", movement.getId());
+        }
+
         return new ResponseEntity(result, HttpStatus.CREATED);
     }
 

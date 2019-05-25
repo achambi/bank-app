@@ -1,10 +1,9 @@
 package bo.com.mondongo.bankapp.service;
 
 import bo.com.mondongo.bankapp.dto.AccountSampleDto;
-import bo.com.mondongo.bankapp.entity.Account;
-import bo.com.mondongo.bankapp.entity.Currency;
-import bo.com.mondongo.bankapp.entity.Department;
+import bo.com.mondongo.bankapp.entity.*;
 import bo.com.mondongo.bankapp.repository.AccountRepository;
+import bo.com.mondongo.bankapp.repository.MovementRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,11 +24,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class AccountServiceTest {
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private MovementRepository movementRepository;
 
     @InjectMocks
     private AccountService accountService;
@@ -39,14 +40,16 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void create() {
+    public void create_CaseAmountZero() {
         Account account = new Account();
+        //TODO:WE NEED TO MODIFY THIS LINE AUTO CREATING THE ACCOUNT, NUMBER. ANGEL CHAMBI 25/05/19
         account.setNumber("201-01-000001");
         account.setDepartment(Department.LA_PAZ);
         account.setBalance(0.00);
         account.setCurrency(Currency.BOLIVIANOS);
         account.setHolder("Jhon Snow");
         account.setId(1);
+
         when(accountRepository.save(eq(account))).thenReturn(account);
 
         ResponseEntity responseEntity = accountService.create(account);
@@ -54,6 +57,42 @@ public class AccountServiceTest {
         Map result = (HashMap) responseEntity.getBody();
         assertEquals(account.getId(), result.get("id"));
         verify(accountRepository, times(1)).save(eq(account));
+    }
+
+    @Test
+    public void create_CaseAmountNotZero() {
+
+        double amount = 10.00;
+        Currency bolivianos = Currency.BOLIVIANOS;
+
+        Account account = new Account();
+        account.setNumber("201-01-000001");
+        account.setDepartment(Department.LA_PAZ);
+        account.setBalance(amount);
+        account.setCurrency(bolivianos);
+        account.setHolder("Jhon Snow");
+        account.setId(1);
+
+        Movement movement = new Movement();
+        movement.setId(1);
+        movement.setAmount(amount);
+        movement.setCurrency(bolivianos);
+        movement.setType(MovementType.CREDIT);
+
+        when(accountRepository.save(eq(account))).thenReturn(account);
+        when(movementRepository.save(eq(movement))).thenReturn(movement);
+
+
+        ResponseEntity responseEntity = accountService.create(account);
+
+
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        Map result = (HashMap) responseEntity.getBody();
+        assertEquals(account.getId(), result.get("id"));
+        assertEquals(account.getId(), result.get("movementId"));
+
+        verify(accountRepository, times(1)).save(eq(account));
+        verify(movementRepository, times(1)).save(eq(movement));
     }
 
     @Test
@@ -70,7 +109,6 @@ public class AccountServiceTest {
         accountsExpected.add(account1);
         accountsExpected.add(account2);
         Mockito.when(accountRepository.findAll()).thenReturn(accountsExpected);
-
 
         List<AccountSampleDto> accounts = accountService.listAll();
         assertEquals(accountsExpected.size(), accounts.size());
