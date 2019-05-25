@@ -3,23 +3,25 @@ package bo.com.mondongo.bankapp.service;
 import bo.com.mondongo.bankapp.dto.AccountSampleDto;
 import bo.com.mondongo.bankapp.entity.Account;
 import bo.com.mondongo.bankapp.entity.Movement;
-import bo.com.mondongo.bankapp.entity.MovementType;
 import bo.com.mondongo.bankapp.repository.AccountRepository;
 import bo.com.mondongo.bankapp.repository.MovementRepository;
-import javafx.scene.canvas.GraphicsContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class AccountService {
     private AccountRepository accountRepository;
     private MovementRepository movementRepository;
 
-    public AccountService(AccountRepository accountRepository, MovementRepository movementRepository) {
+    @Autowired
+    public AccountService(@Qualifier("AccountRepository") AccountRepository accountRepository, @Qualifier("MovementRepository") MovementRepository movementRepository) {
         this.accountRepository = accountRepository;
         this.movementRepository = movementRepository;
     }
