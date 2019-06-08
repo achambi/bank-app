@@ -1,10 +1,22 @@
 package bo.com.mondongo.bankapp.entity;
 
+import bo.com.mondongo.bankapp.dto.AccountDto;
+import bo.com.mondongo.bankapp.dto.AccountInsertDTO;
 import javax.persistence.*;
 
 @Entity
 @Table(name = "account")
 public class Account {
+
+    public Account() {
+    }
+
+    public Account(AccountInsertDTO accountDto) {
+        this.balance = accountDto.getBalance();
+        this.currency = accountDto.getCurrency();
+        this.department = accountDto.getDepartment();
+        this.holder = accountDto.getHolder();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,5 +86,9 @@ public class Account {
 
     public void setHolder(String holder) {
         this.holder = holder;
+    }
+
+    public void createNumber(){
+
     }
 }

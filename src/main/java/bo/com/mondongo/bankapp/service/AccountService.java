@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Service("AccountService")
 public class AccountService {
     private AccountRepository accountRepository;
     private MovementRepository movementRepository;
