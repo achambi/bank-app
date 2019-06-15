@@ -1,8 +1,8 @@
 package bo.com.mondongo.bankapp.entity;
 
-import bo.com.mondongo.bankapp.dto.AccountDto;
 import bo.com.mondongo.bankapp.dto.AccountInsertDTO;
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "account")
@@ -16,6 +16,14 @@ public class Account {
         this.currency = accountDto.getCurrency();
         this.department = accountDto.getDepartment();
         this.holder = accountDto.getHolder();
+    }
+
+    public Account(String number, Double balance, Currency currency, String holder, Department department) {
+        this.number = number;
+        this.balance = balance;
+        this.currency = currency;
+        this.holder = holder;
+        this.department = department;
     }
 
     @Id
@@ -88,7 +96,18 @@ public class Account {
         this.holder = holder;
     }
 
-    public void createNumber(){
+    public void createNumber() {
 
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Account account = (Account) obj;
+        return this.id == account.id &&
+            Objects.equals(account.number, this.number) &&
+            Objects.equals(account.balance, account.balance) &&
+            Objects.equals(account.currency, account.currency) &&
+            Objects.equals(account.holder, account.holder) &&
+            Objects.equals(account.department, account.department);
     }
 }

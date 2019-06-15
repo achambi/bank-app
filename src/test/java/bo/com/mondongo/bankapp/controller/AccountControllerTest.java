@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import javax.ws.rs.core.MediaType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,6 +53,10 @@ public class AccountControllerTest extends TestCase {
         accountInsertDTO.setDepartment(Department.BENI);
         accountInsertDTO.setCurrency(Currency.BOLIVIANOS);
 
+        Account accountExpected = new Account(null, 20.00, Currency.BOLIVIANOS, "Daenerys Targaryen",
+                                              Department.BENI
+        );
+
         when(accountService.create(any(Account.class)))
             .thenReturn(new ResponseEntity(HttpStatus.CREATED));
 
@@ -61,7 +66,7 @@ public class AccountControllerTest extends TestCase {
                             .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isCreated());
 
-        Mockito.verify(accountService).create(any(Account.class));
+        Mockito.verify(accountService).create(eq(accountExpected));
     }
 
     @Test
